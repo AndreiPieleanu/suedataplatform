@@ -1,0 +1,63 @@
+.env*
+manifests/
+
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Build outputs
+*.out
+*.test
+*.prof
+*.bench
+*.o
+*.a
+
+# Build directories
+bin/
+build/
+run/
+
+# Go workspace file
+go.work
+
+# Local module cache (as of Go 1.11)
+pkg/mod/
+
+# Dependency directories (remove the leading slash to ignore "vendor" in any location)
+# Uncomment the next line if you do not want to commit the vendor directory
+# vendor/
+
+# IDE/editor directories and files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs and coverage files
+*.log
+coverage.out
+
+# Temporary files
+*.tmp
+*.temp
+
+# Vim swap files
+*.swp
+
+# Emacs temporary files
+*~
+
+# Air configuration
+.air.toml
+tmp/
+
+# generated proto file
+controller/

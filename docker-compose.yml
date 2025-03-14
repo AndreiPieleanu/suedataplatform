@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  rabbitmq:
+    image: rabbitmq:4-management-alpine        
+    ports:
+      - "5672:5672"                   
+      - "15672:15672"
+    networks:
+      - suedataplatform                 
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  kong-db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: kong
+      POSTGRES_DB: kong
+      POSTGRES_PASSWORD: kongpass
+    networks:
+      - suedataplatform
+    ports:
+      - "5432:5432"
+
+  kong-migrations:
+    image: kong/kong-gateway:3.8.0.0
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-db
+      KONG_PG_PASSWORD: kongpass
+      KONG_PASSWORD: test
+    depends_on:
+      - kong-db
+    networks:
+      - suedataplatform
+    command: kong migrations bootstrap
+    restart: "no"
+
+  kong:
+    image: kong/kong-gateway:3.8.0.0
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-db
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: kongpass
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_ADMIN_GUI_URL: http://localhost:8002
+    depends_on:
+      - kong-migrations
+    networks:
+      - suedataplatform
+    ports:
+      - "8000:8000" 
+      - "8443:8443"    
+      - "8001:8001"    
+      - "8444:8444"    
+      - "8002:8002"    
+      - "8445:8445"    
+      - "8003:8003"    
+      - "8004:8004" 
+    restart: always 
+
+networks:
+  suedataplatform:
+    name: suedataplatform
+    driver: bridge

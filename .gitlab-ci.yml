@@ -1,0 +1,96 @@
+stages:
+  - build
+  - test
+
+before_script:
+  - cd "$MICROSERVICE"
+
+.build_template:
+  script:
+    - if ! command -v protoc &> /dev/null; then echo "Installing protoc..."; apk add --no-cache protobuf protobuf-dev; fi
+    - go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+    - go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+    - echo "Building the prototype code for $MICROSERVICE"
+    - protoc --go_out=. --go-grpc_out=. api/"$PROTO"
+    - echo "Building $MICROSERVICE"
+    - go build -o bin/$MICROSERVICE .
+    - echo "Build completed for $MICROSERVICE"
+  artifacts:
+    paths:
+      - $MICROSERVICE/api/controller/
+    expire_in: 1 hour
+
+build_token_service:
+  stage: build
+  variables:
+    MICROSERVICE: "token-service"
+    PROTO: "token.proto"
+  extends: .build_template
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: "$CI_COMMIT_MESSAGE =~ /token-service/"
+
+build_pvc_service:
+  stage: build
+  variables:
+    MICROSERVICE: "pvc-service"
+    PROTO: "pvc.proto"
+  extends: .build_template
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: "$CI_COMMIT_MESSAGE =~ /pvc-service/"
+
+build_notebook_service:
+  stage: build
+  variables:
+    MICROSERVICE: "notebook-service"
+    PROTO: "notebook.proto"
+  extends: .build_template
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: "$CI_COMMIT_MESSAGE =~ /notebook-service/"
+
+.test_template:
+  script:
+    - echo "Running tests for $MICROSERVICE"
+    - go test -v ./...
+    - echo "Tests completed for $MICROSERVICE"
+
+test_token_service:
+  stage: test
+  variables:
+    MICROSERVICE: "token-service"
+  extends: .test_template
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: "$CI_COMMIT_MESSAGE =~ /token-service/"
+
+test_pvc_service:
+  stage: test
+  variables:
+    MICROSERVICE: "pvc-service"
+  extends: .test_template
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: "$CI_COMMIT_MESSAGE =~ /pvc-service/"
+
+test_notebook_service:
+  stage: test
+  variables:
+    MICROSERVICE: "notebook-service"
+  extends: .test_template
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: "$CI_COMMIT_MESSAGE =~ /notebook-service/"
+
+.registry_template:
+  script:
+    - echo "pushing $MICROSERVICE docker image to gitlab registry"
+    - go test -v ./...
+    - echo "push completed for $MICROSERVICE"
