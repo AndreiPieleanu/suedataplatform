@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  redis-token:
+    image: "redis:7.4-alpine"
+    environment:
+      - REDIS_PASSWORD=redis
+    ports:
+      - "6379:6379"
+    networks:
+      - suedataplatform
+    volumes:
+      - redis-data:/data
+    command: ["redis-server", "--requirepass", "redis"]
+  
+  token-service:
+    build: .
+    ports:
+      - "50051:50051"
+    networks:
+      - suedataplatform
+    env_file:
+      - .env.docker
+    depends_on:
+      - redis-token
+    restart: always   
+
+volumes:
+  redis-data:
+
+networks:
+  suedataplatform:
+    external: true     

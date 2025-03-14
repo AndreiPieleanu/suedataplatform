@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package userservice;
+
+option go_package = "./api/controller";
+
+service UserService {
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+}
+message CreateUserRequest {
+    string username = 1;
+    string password = 2;
+    string displayName = 3;
+}
+
+message CreateUserResponse {
+    User user = 1;
+}
+
+message User {
+    string id = 1;
+    string username = 2;
+    string displayName = 3;
+}

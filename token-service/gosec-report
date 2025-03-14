@@ -1,0 +1,28 @@
+{
+	"Golang errors": {},
+	"Issues": [
+		{
+			"severity": "HIGH",
+			"confidence": "LOW",
+			"cwe": {
+				"id": "798",
+				"url": "https://cwe.mitre.org/data/definitions/798.html"
+			},
+			"rule_id": "G101",
+			"details": "Potential hardcoded credentials",
+			"file": "C:\\Users\\Andrei\\Desktop\\Data\\aFontys Courses\\Semester 6\\group project\\suedataplatform\\token-service\\api\\controller\\token_grpc.pb.go",
+			"code": "21: const (\n22: \tToken_Login_FullMethodName = \"/token.Token/Login\"\n23: )\n",
+			"line": "22",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		}
+	],
+	"Stats": {
+		"files": 17,
+		"lines": 1047,
+		"nosec": 0,
+		"found": 1
+	},
+	"GosecVersion": "dev"
+}

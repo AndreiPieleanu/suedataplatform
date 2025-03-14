@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package pvcservice;
+
+option go_package = "./api/controller";
+
+import "google/protobuf/empty.proto";
+
+service PVCService {
+  rpc CreateVolume(CreatePvcRequest) returns (google.protobuf.Empty);
+  rpc ListPVCS(ListPvcRequest) returns (ListPvcResponse);
+  rpc DeletePvc(DeletePvcRequest) returns (google.protobuf.Empty);
+}
+
+message CreatePvcRequest {
+  string name = 1;
+  optional string size = 2;
+}
+
+message DeletePvcRequest {
+  string name = 1;
+  optional bool force = 2;
+}
+
+// Request message for listing PVCs
+message ListPvcRequest {
+  // Add any required fields if needed
+}
+
+// Response message for listing PVCs
+message ListPvcResponse {
+  repeated string pvc_names = 1; // PVC names as a repeated field (list)
+}

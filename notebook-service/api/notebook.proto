@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package notebookservice;
+
+option go_package = "./api/controller";
+
+import "google/protobuf/empty.proto";
+
+service NotebookService {
+  rpc CreateNotebook(CreateNotebookRequest) returns (google.protobuf.Empty);
+  rpc DeleteNotebook(DeleteNotebookRequest) returns (google.protobuf.Empty) {}
+  rpc ListActiveNotebooks(ListActiveNotebooksRequest) returns (ListActiveNotebooksResponse);
+}
+
+enum NotebookType {
+  JUPITER = 0;
+  VSCODE = 1;
+  RSTUDIO = 2;
+}
+
+message CreateNotebookRequest {
+  string name = 1;
+  optional string minCpu = 2;
+  optional string maxCpu = 3;
+  optional string minMemory = 4;
+  optional string maxMemory = 5;
+  optional string volume = 6;
+  optional bool open = 7;
+  optional string pvc = 8;
+  optional bool save = 9;
+  optional NotebookType type = 10;
+}
+
+message DeleteNotebookRequest {
+  string notebook_name = 1;
+}
+// Request message for listing Notebooks
+
+message ListActiveNotebooksRequest {
+  // Add any required fields if needed
+}
+
+// Response message for listing Notebooks
+message ListActiveNotebooksResponse {
+  repeated string notebook_names = 1; // PVC names as a repeated field (list)
+}
